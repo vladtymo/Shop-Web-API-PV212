@@ -1,0 +1,6 @@
+@ShopWebApi_PV212_HostAddress = http://localhost:5216
+
+GET {{ShopWebApi_PV212_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
