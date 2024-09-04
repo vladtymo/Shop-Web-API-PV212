@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core.Dtos;
+using Core.Interfaces;
 using Data.Data;
 using Data.Entities;
 using Microsoft.AspNetCore.Http;
@@ -12,91 +13,59 @@ namespace ShopWebApi_PV212.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly ShopDbContext ctx;
-        private readonly IMapper mapper;
+        private readonly IProductsService productsService;
 
-        public ProductsController(ShopDbContext ctx, IMapper mapper)
+        public ProductsController(IProductsService productsService)
         {
-            this.ctx = ctx;
-            this.mapper = mapper;
+            this.productsService = productsService;
         }
 
         // [C]reate [R]ead [U]pdate [D]elete
 
         [HttpGet("all")]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var items = mapper.Map<List<ProductDto>>(ctx.Products.ToList());
-            return Ok(items);
+            return Ok(await productsService.GetAll());
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var product = ctx.Products.Find(id);
-            if (product == null) return NotFound();
-
-            // load related table data
-            ctx.Entry(product).Reference(x => x.Category).Load();
-
-            return Ok(mapper.Map<ProductDto>(product));
+            return Ok(await productsService.Get(id));
         }
 
         [HttpPost]
-        public IActionResult Create(CreateProductDto model)
+        public async Task<IActionResult> Create(CreateProductDto model)
         {
-            if (!ModelState.IsValid) return BadRequest();
-
-            ctx.Products.Add(mapper.Map<Product>(model));
-            ctx.SaveChanges();
-
+            await productsService.Create(model);
             return Ok();
         }
 
         [HttpPut]
-        public IActionResult Edit(EditProductDto model)
+        public async Task<IActionResult> Edit(EditProductDto model)
         {
-            if (!ModelState.IsValid) return BadRequest();
-
-            ctx.Products.Update(mapper.Map<Product>(model));
-            ctx.SaveChanges();
-
+            await productsService.Edit(model);
             return Ok();
         }
 
         [HttpPatch("archive")]
-        public IActionResult Archive(int id)
+        public async Task<IActionResult> Archive(int id)
         {
-            var product = ctx.Products.Find(id);
-            if (product == null) return NotFound();
-
-            product.Archived = true;
-            ctx.SaveChanges();
-
+            await productsService.Archive(id);
             return Ok();
         }
 
         [HttpPatch("restore")]
-        public IActionResult Restore(int id)
+        public async Task<IActionResult> Restore(int id)
         {
-            var product = ctx.Products.Find(id);
-            if (product == null) return NotFound();
-
-            product.Archived = false;
-            ctx.SaveChanges();
-
+            await productsService.Restore(id);
             return Ok();
         }
 
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var product = ctx.Products.Find(id);
-            if (product == null) return NotFound();
-
-            ctx.Products.Remove(product);
-            ctx.SaveChanges();
-
+            await productsService.Delete(id);
             return Ok();
         }
     }

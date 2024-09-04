@@ -1,4 +1,6 @@
+using Core.Interfaces;
 using Core.MapperProfiles;
+using Core.Services;
 using Data.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +20,9 @@ builder.Services.AddDbContext<ShopDbContext>(options =>
 );
 
 builder.Services.AddAutoMapper(typeof(AppProfile));
+
+// custom services
+builder.Services.AddScoped<IProductsService, ProductsService>();
 
 var app = builder.Build();
 
