@@ -2,6 +2,7 @@
 using Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Data.DataSeeder;
+using System.Reflection;
 
 namespace Data.Data
 {
@@ -29,6 +30,9 @@ namespace Data.Data
             //DataSeederExtensions.SeedProducts(modelBuilder);
             modelBuilder.SeedCategories();
             modelBuilder.SeedProducts();
+
+            // Fluent API
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }
 }
