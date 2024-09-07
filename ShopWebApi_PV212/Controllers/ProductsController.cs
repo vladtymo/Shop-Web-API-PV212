@@ -37,6 +37,11 @@ namespace ShopWebApi_PV212.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateProductDto model)
         {
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
+
             await productsService.Create(model);
             return Ok();
         }

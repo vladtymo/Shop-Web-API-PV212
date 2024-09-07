@@ -3,6 +3,7 @@ using Core.Dtos;
 using Core.Interfaces;
 using Data.Data;
 using Data.Entities;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,11 +17,16 @@ namespace Core.Services
     {
         private readonly ShopDbContext ctx;
         private readonly IMapper mapper;
+        private readonly IValidator<CreateProductDto> validator;
 
-        public ProductsService(ShopDbContext ctx, IMapper mapper)
+        public ProductsService(
+            ShopDbContext ctx, 
+            IMapper mapper,
+            IValidator<CreateProductDto> validator)
         {
             this.ctx = ctx;
             this.mapper = mapper;
+            this.validator = validator;
         }
 
         public async Task Archive(int id)
@@ -35,6 +41,7 @@ namespace Core.Services
         public async Task Create(CreateProductDto model)
         {
             // TODO: validate model
+            //validator.ValidateAndThrow(model);
 
             ctx.Products.Add(mapper.Map<Product>(model));
             await ctx.SaveChangesAsync();
