@@ -5,6 +5,7 @@ using Data.Data;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using ShopWebApi_PV212.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,12 +34,20 @@ builder.Services.AddScoped<IProductsService, ProductsService>();
 
 var app = builder.Build();
 
+//app.Use(async (ctx, next) =>
+//{
+//    Console.WriteLine("Middleware is invoked!");
+//    await next(ctx);
+//});
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<CustomMiddleware>();
 
 app.UseHttpsRedirection();
 

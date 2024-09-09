@@ -31,7 +31,14 @@ namespace ShopWebApi_PV212.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            return Ok(await productsService.Get(id));
+            //try
+            //{
+                return Ok(await productsService.Get(id));
+            //}
+            //catch (Exception ex)
+            //{
+            //    return NotFound(new { ex.Message });
+            //}
         }
 
         [HttpPost]
