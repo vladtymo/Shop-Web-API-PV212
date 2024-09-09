@@ -4,11 +4,11 @@ using System.Net;
 
 namespace ShopWebApi_PV212.Middlewares
 {
-    public class CustomMiddleware
+    public class ErrorHandlerMiddleware
     {
         private readonly RequestDelegate _next;
 
-        public CustomMiddleware(RequestDelegate next)
+        public ErrorHandlerMiddleware(RequestDelegate next)
         {
             _next = next;
         }
@@ -33,7 +33,11 @@ namespace ShopWebApi_PV212.Middlewares
         private async void SendResponse(HttpContext context, string msg, HttpStatusCode code = HttpStatusCode.InternalServerError)
         {
             context.Response.StatusCode = (int)code;
-            await context.Response.WriteAsJsonAsync(new { Message = msg });
+            await context.Response.WriteAsJsonAsync(new 
+            { 
+                Message = msg,
+                Status = code
+            });
         }
     }
 }
