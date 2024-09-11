@@ -52,6 +52,14 @@ namespace Core.Services
 
         public async Task Delete(int id)
         {
+            switch (id)
+            {
+                case 10: throw new Exception();
+                case 11: throw new FileNotFoundException();
+                case 12: throw new DivideByZeroException();
+                case 13: throw new ArgumentException();
+                case 14: throw new OutOfMemoryException();
+            }
             var product = await ctx.Products.FindAsync(id);
             if (product == null)
                 throw new HttpException("Product not found!", HttpStatusCode.NotFound);

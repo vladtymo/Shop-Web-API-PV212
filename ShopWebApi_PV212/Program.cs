@@ -32,6 +32,10 @@ builder.Services.AddAutoMapper(typeof(AppProfile));
 // custom services
 builder.Services.AddScoped<IProductsService, ProductsService>();
 
+// exception handlers
+builder.Services.AddExceptionHandler<HttpExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
 
 //app.Use(async (ctx, next) =>
@@ -47,7 +51,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<ErrorHandlerMiddleware>();
+//app.UseMiddleware<ErrorHandlerMiddleware>();
+app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 

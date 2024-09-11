@@ -32,6 +32,7 @@ namespace ShopWebApi_PV212.Middlewares
 
         private async void SendResponse(HttpContext context, string msg, HttpStatusCode code = HttpStatusCode.InternalServerError)
         {
+            context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;
             await context.Response.WriteAsJsonAsync(new 
             { 
