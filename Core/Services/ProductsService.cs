@@ -4,6 +4,7 @@ using Core.Exceptions;
 using Core.Interfaces;
 using Data.Data;
 using Data.Entities;
+using Data.Repositories;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,28 +18,30 @@ namespace Core.Services
 {
     public class ProductsService : IProductsService
     {
-        private readonly ShopDbContext ctx;
+        //private readonly ShopDbContext ctx;
+
         private readonly IMapper mapper;
         private readonly IValidator<CreateProductDto> validator;
+        private readonly IRepository<Product> productR;
 
         public ProductsService(
-            ShopDbContext ctx, 
             IMapper mapper,
-            IValidator<CreateProductDto> validator)
+            IValidator<CreateProductDto> validator,
+            IRepository<Product> productR)
         {
-            this.ctx = ctx;
             this.mapper = mapper;
             this.validator = validator;
+            this.productR = productR;
         }
 
         public async Task Archive(int id)
         {
-            var product = await ctx.Products.FindAsync(id);
+            var product = await productR.GetById(id);
             if (product == null)
                 throw new HttpException("Product not found!", HttpStatusCode.NotFound);
 
             product.Archived = true;
-            await ctx.SaveChangesAsync();
+            await productR.Save();
         }
 
         public async Task Create(CreateProductDto model)
@@ -46,61 +49,53 @@ namespace Core.Services
             // TODO: validate model
             //validator.ValidateAndThrow(model);
 
-            ctx.Products.Add(mapper.Map<Product>(model));
-            await ctx.SaveChangesAsync();
+            await productR.Insert(mapper.Map<Product>(model));
+            await productR.Save();
         }
 
         public async Task Delete(int id)
         {
-            switch (id)
-            {
-                case 10: throw new Exception();
-                case 11: throw new FileNotFoundException();
-                case 12: throw new DivideByZeroException();
-                case 13: throw new ArgumentException();
-                case 14: throw new OutOfMemoryException();
-            }
-            var product = await ctx.Products.FindAsync(id);
+            var product = await productR.GetById(id);
             if (product == null)
                 throw new HttpException("Product not found!", HttpStatusCode.NotFound);
 
-            ctx.Products.Remove(product);
-            await ctx.SaveChangesAsync();
+            await productR.Delete(product);
+            await productR.Save();
         }
 
         public async Task Edit(EditProductDto model)
         {
             // TODO: validate model
 
-            ctx.Products.Update(mapper.Map<Product>(model));
-            await ctx.SaveChangesAsync();
+            await productR.Update(mapper.Map<Product>(model));
+            await productR.Save();
         }
 
         public async Task<ProductDto?> Get(int id)
         {
-            var product = await ctx.Products.FindAsync(id);
+            var product = await productR.GetById(id);
             if (product == null) 
                 throw new HttpException("Product not found!", HttpStatusCode.NotFound);
 
             // load related table data
-            await ctx.Entry(product).Reference(x => x.Category).LoadAsync();
+            //await ctx.Entry(product).Reference(x => x.Category).LoadAsync();
 
             return mapper.Map<ProductDto>(product);
         }
 
         public async Task<IEnumerable<ProductDto>> GetAll()
         {
-            return mapper.Map<List<ProductDto>>(await ctx.Products.ToListAsync());
+            return mapper.Map<List<ProductDto>>(await productR.GetAll());
         }
 
         public async Task Restore(int id)
         {
-            var product = await ctx.Products.FindAsync(id);
+            var product = await productR.GetById(id);
             if (product == null) 
                 throw new HttpException("Product not found!", HttpStatusCode.NotFound);
 
             product.Archived = false;
-            await ctx.SaveChangesAsync();
+            await productR.Save();
         }
     }
 }
