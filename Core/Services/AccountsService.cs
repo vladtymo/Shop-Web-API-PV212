@@ -36,9 +36,14 @@ namespace Core.Services
             }
         }
 
-        public Task Login(LoginDto model)
+        public async Task Login(LoginDto model)
         {
-            throw new NotImplementedException();
+            var user = await userManager.FindByEmailAsync(model.Email);
+
+            if (user == null || !await userManager.CheckPasswordAsync(user, model.Password))
+                throw new HttpException("Invalid login or password.", HttpStatusCode.BadRequest);
+
+            // generate access token... (JWT)
         }
 
         public Task Logout()
