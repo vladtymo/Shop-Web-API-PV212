@@ -2,9 +2,11 @@ using Core.Interfaces;
 using Core.MapperProfiles;
 using Core.Services;
 using Data.Data;
+using Data.Entities;
 using Data.Repositories;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ShopWebApi_PV212.Middlewares;
 
@@ -22,6 +24,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ShopDbContext>(options =>
     options.UseSqlServer(connectionString)
 );
+builder.Services.AddDbContext<ShopDbContext>(opt => opt.UseSqlServer(connectionString));
+builder.Services.AddIdentity<User, IdentityRole>(options =>
+    options.SignIn.RequireConfirmedAccount = false)
+    .AddDefaultTokenProviders()
+    .AddEntityFrameworkStores<ShopDbContext>();
 
 // fluent validators
 builder.Services.AddFluentValidationAutoValidation();
@@ -34,6 +41,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 // custom services
 builder.Services.AddScoped<IProductsService, ProductsService>();
+builder.Services.AddScoped<IAccountsService, AccountsService>();
 
 // exception handlers
 builder.Services.AddExceptionHandler<HttpExceptionHandler>();
