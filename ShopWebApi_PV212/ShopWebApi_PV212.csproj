@@ -4,11 +4,13 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>fac1fd23-42b7-454d-a1d5-0f2911687aec</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
 	<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
 	<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.2" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
