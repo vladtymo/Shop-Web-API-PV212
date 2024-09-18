@@ -12,12 +12,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using ShopWebApi_PV212.Middlewares;
+using ShopWebApi_PV212.ServiceExtensions;
 using System.Text;
+using Core;
+using Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string? connectionString = builder.Configuration.GetConnectionString("LocalDb");
+string connectionString = builder.Configuration.GetConnectionString("LocalDb")!;
 
 // Add services to the container.
 
@@ -26,63 +30,24 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ShopDbContext>(options =>
-    options.UseSqlServer(connectionString)
-);
-builder.Services.AddDbContext<ShopDbContext>(opt => opt.UseSqlServer(connectionString));
-builder.Services.AddIdentity<User, IdentityRole>(options =>
-    options.SignIn.RequireConfirmedAccount = false)
-    .AddDefaultTokenProviders()
-    .AddEntityFrameworkStores<ShopDbContext>();
+builder.Services.AddDbContext(connectionString);
+builder.Services.AddIdentity();
+builder.Services.AddRepository();
 
 // fluent validators
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddFluentValidationClientsideAdapters();
-builder.Services.AddValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
-
-builder.Services.AddAutoMapper(typeof(AppProfile));
-
-builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddAutoMapper();
+builder.Services.AddFluentValidators();
 
 // custom services
-builder.Services.AddScoped<IProductsService, ProductsService>();
-builder.Services.AddScoped<IAccountsService, AccountsService>();
-builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddCustomServices();
 
 // exception handlers
-builder.Services.AddExceptionHandler<HttpExceptionHandler>();
-builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler();
 
-builder.Services.AddSingleton(_ =>
-              builder.Configuration
-                  .GetSection(nameof(JwtOptions))
-                  .Get<JwtOptions>()!);
-
-var jwtOpts = builder.Configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>()!;
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(o =>
-                {
-                    o.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = false,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = jwtOpts.Issuer,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOpts.Key)),
-                        ClockSkew = TimeSpan.Zero
-                    };
-                });
-
+builder.Services.AddJWT(builder.Configuration);
+builder.Services.AddSwaggerJWT();
 
 var app = builder.Build();
-
-//app.Use(async (ctx, next) =>
-//{
-//    Console.WriteLine("Middleware is invoked!");
-//    await next(ctx);
-//});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -91,11 +56,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

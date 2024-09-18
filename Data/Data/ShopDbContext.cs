@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Data.Data
 {
-    public class ShopDbContext : IdentityDbContext<User>
+    internal class ShopDbContext : IdentityDbContext<User>
     {
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }

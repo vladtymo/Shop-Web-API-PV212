@@ -3,6 +3,8 @@ using Core.Dtos;
 using Core.Interfaces;
 using Data.Data;
 using Data.Entities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +30,7 @@ namespace ShopWebApi_PV212.Controllers
             return Ok(await productsService.GetAll());
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
