@@ -102,5 +102,10 @@ namespace Core.Services
         {
             return DateTime.UtcNow.AddDays(-jwtOptions.RefreshTokenLifetimeInDays);
         }
+
+        public bool IsRefreshTokenExpired(DateTime creationTime)
+        {
+            return creationTime < GetLastValidRefreshTokenDate();
+        }
     }
 }

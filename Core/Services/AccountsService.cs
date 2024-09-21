@@ -87,7 +87,7 @@ namespace Core.Services
         {
             var refrestToken = (await refreshTokenR.Get(x => x.Token == userTokens.RefreshToken)).FirstOrDefault();
 
-            if (refrestToken == null)
+            if (refrestToken == null || jwtService.IsRefreshTokenExpired(refrestToken.CreationDate))
                 throw new HttpException("Invalid token.", HttpStatusCode.BadRequest);
 
             var claims = jwtService.GetClaimsFromExpiredToken(userTokens.AccessToken);
