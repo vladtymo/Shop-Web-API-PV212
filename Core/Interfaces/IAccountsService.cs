@@ -6,7 +6,7 @@ namespace Core.Interfaces
     {
         Task Register(RegisterDto model);
         Task<UserTokens> Login(LoginDto model);
-        Task Logout();
+        Task Logout(string refreshToken);
         Task<UserTokens> RefreshTokens(UserTokens tokens);
     }
 }

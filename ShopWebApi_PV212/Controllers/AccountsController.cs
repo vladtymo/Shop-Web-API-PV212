@@ -3,6 +3,7 @@ using Core.Interfaces;
 using Core.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace ShopWebApi_PV212.Controllers
 {
@@ -36,9 +37,10 @@ namespace ShopWebApi_PV212.Controllers
             return Ok(await accountsService.RefreshTokens(tokens));
         }
 
-        [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        [HttpDelete("logout")]
+        public async Task<IActionResult> Logout([FromBody] string refreshToken)
         {
+            await accountsService.Logout(refreshToken);
             return Ok();
         }
     }

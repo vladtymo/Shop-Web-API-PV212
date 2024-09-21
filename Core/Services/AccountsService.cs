@@ -57,9 +57,13 @@ namespace Core.Services
             };
         }
 
-        public Task Logout()
+        public async Task Logout(string refreshToken)
         {
-            throw new NotImplementedException();
+            var record = (await refreshTokenR.Get(x => x.Token == refreshToken)).FirstOrDefault();
+            if (record == null) return;
+
+            await refreshTokenR.Delete(record);
+            await refreshTokenR.Save();
         }
 
         private RefreshToken CreateRefreshToken(string userId)
