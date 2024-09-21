@@ -8,5 +8,6 @@ namespace Core.Interfaces
         Task<UserTokens> Login(LoginDto model);
         Task Logout(string refreshToken);
         Task<UserTokens> RefreshTokens(UserTokens tokens);
+        Task RemoveExpiredRefreshTokens();
     }
 }

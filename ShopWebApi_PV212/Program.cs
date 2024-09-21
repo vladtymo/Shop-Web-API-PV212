@@ -18,6 +18,8 @@ using ShopWebApi_PV212.ServiceExtensions;
 using System.Text;
 using Core;
 using Data;
+using Hangfire;
+using ShopWebApi_PV212;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +49,8 @@ builder.Services.AddExceptionHandler();
 builder.Services.AddJWT(builder.Configuration);
 builder.Services.AddSwaggerJWT();
 
+builder.Services.AddHangfire(connectionString);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -62,6 +66,9 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseHangfireDashboard("/dash");
+JobConfigurator.AddJobs();
 
 app.MapControllers();
 

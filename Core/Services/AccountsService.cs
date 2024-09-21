@@ -109,5 +109,17 @@ namespace Core.Services
 
             return tokens;
         }
+
+        public async Task RemoveExpiredRefreshTokens()
+        {
+            var lastDate = jwtService.GetLastValidRefreshTokenDate();
+            var expiredTokens = await refreshTokenR.Get(x => x.CreationDate < lastDate);
+
+            foreach (var i in expiredTokens)
+            {
+                await refreshTokenR.Delete(i);
+            }
+            await refreshTokenR.Save();
+        }
     }
 }

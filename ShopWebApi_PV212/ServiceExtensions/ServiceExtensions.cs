@@ -1,4 +1,5 @@
 ﻿using Core.Models;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -65,6 +66,15 @@ namespace ShopWebApi_PV212.ServiceExtensions
                     }
                 });
             });
+        }
+        public static void AddHangfire(this IServiceCollection services, string connectionString)
+        {
+            services.AddHangfire(config =>
+            {
+                config.UseSqlServerStorage(connectionString);
+            });
+
+            services.AddHangfireServer();
         }
     }
 }
