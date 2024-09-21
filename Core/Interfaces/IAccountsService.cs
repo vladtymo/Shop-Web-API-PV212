@@ -5,7 +5,8 @@ namespace Core.Interfaces
     public interface IAccountsService
     {
         Task Register(RegisterDto model);
-        Task<LoginResponse> Login(LoginDto model);
+        Task<UserTokens> Login(LoginDto model);
         Task Logout();
+        Task<UserTokens> RefreshTokens(UserTokens tokens);
     }
 }

@@ -3,19 +3,23 @@ using Core.Dtos;
 using Core.Exceptions;
 using Core.Interfaces;
 using Data.Entities;
+using Data.Repositories;
 using Microsoft.AspNetCore.Identity;
 using System.Net;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Core.Services
 {
     public class AccountsService(
         UserManager<User> userManager, 
         IMapper mapper,
-        IJwtService jwtService) : IAccountsService
+        IJwtService jwtService,
+        IRepository<RefreshToken> refreshTokenR) : IAccountsService
     {
         private readonly UserManager<User> userManager = userManager;
         private readonly IMapper mapper = mapper;
         private readonly IJwtService jwtService = jwtService;
+        private readonly IRepository<RefreshToken> refreshTokenR = refreshTokenR;
 
         public async Task Register(RegisterDto model)
         {
@@ -38,7 +42,7 @@ namespace Core.Services
             }
         }
 
-        public async Task<LoginResponse> Login(LoginDto model)
+        public async Task<UserTokens> Login(LoginDto model)
         {
             var user = await userManager.FindByEmailAsync(model.Email);
 
@@ -46,15 +50,60 @@ namespace Core.Services
                 throw new HttpException("Invalid login or password.", HttpStatusCode.BadRequest);
 
             // generate access token... (JWT)
-            return new LoginResponse
+            return new UserTokens
             {
-                Token = jwtService.CreateToken(jwtService.GetClaims(user))
+                AccessToken = jwtService.CreateToken(jwtService.GetClaims(user)),
+                RefreshToken = CreateRefreshToken(user.Id).Token
             };
         }
 
         public Task Logout()
         {
             throw new NotImplementedException();
+        }
+
+        private RefreshToken CreateRefreshToken(string userId)
+        {
+            var refeshToken = jwtService.CreateRefreshToken();
+
+            var refreshTokenEntity = new RefreshToken
+            {
+                Token = refeshToken,
+                UserId = userId,
+                CreationDate = DateTime.UtcNow // Now vs UtcNow
+            };
+
+            refreshTokenR.Insert(refreshTokenEntity);
+            refreshTokenR.Save();
+
+            return refreshTokenEntity;
+        }
+
+        public async Task<UserTokens> RefreshTokens(UserTokens userTokens)
+        {
+            var refrestToken = (await refreshTokenR.Get(x => x.Token == userTokens.RefreshToken)).FirstOrDefault();
+
+            if (refrestToken == null)
+                throw new HttpException("Invalid token.", HttpStatusCode.BadRequest);
+
+            var claims = jwtService.GetClaimsFromExpiredToken(userTokens.AccessToken);
+            var newAccessToken = jwtService.CreateToken(claims);
+            var newRefreshToken = jwtService.CreateRefreshToken();
+
+            // update refresh token in db
+            refrestToken.Token = newRefreshToken;
+            refrestToken.CreationDate = DateTime.UtcNow;
+
+            await refreshTokenR.Update(refrestToken);
+            await refreshTokenR.Save();
+
+            var tokens = new UserTokens()
+            {
+                AccessToken = newAccessToken,
+                RefreshToken = newRefreshToken
+            };
+
+            return tokens;
         }
     }
 }

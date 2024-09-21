@@ -11,6 +11,7 @@ namespace Data.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public ShopDbContext() { }
         public ShopDbContext(DbContextOptions options) : base(options) { }

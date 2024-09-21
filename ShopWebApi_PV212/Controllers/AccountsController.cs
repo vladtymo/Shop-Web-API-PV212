@@ -30,6 +30,12 @@ namespace ShopWebApi_PV212.Controllers
             return Ok(await accountsService.Login(model));
         }
 
+        [HttpPost("refreshTokens")]
+        public async Task<IActionResult> RefreshTokens(UserTokens tokens)
+        {
+            return Ok(await accountsService.RefreshTokens(tokens));
+        }
+
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
