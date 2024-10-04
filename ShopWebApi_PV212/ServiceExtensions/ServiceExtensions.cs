@@ -76,5 +76,19 @@ namespace ShopWebApi_PV212.ServiceExtensions
 
             services.AddHangfireServer();
         }
+        public static void AddCorsPolicies(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "front-end-cors-policy",
+                    policy =>
+                    {
+                        policy.WithOrigins("https://localhost:4200",
+                                            "http://localhost:4200");
+                        policy.AllowAnyMethod();
+                        policy.AllowAnyHeader();
+                    });
+            });
+        }
     }
 }

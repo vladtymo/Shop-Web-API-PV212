@@ -84,7 +84,7 @@ namespace Core.Services
 
         public async Task<IEnumerable<ProductDto>> GetAll()
         {
-            return mapper.Map<List<ProductDto>>(await productR.GetAll());
+            return mapper.Map<List<ProductDto>>(await productR.Get(includeProperties: "Category"));
         }
 
         public async Task Restore(int id)

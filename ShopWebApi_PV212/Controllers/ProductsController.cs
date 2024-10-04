@@ -63,21 +63,21 @@ namespace ShopWebApi_PV212.Controllers
             return Ok();
         }
 
-        [HttpPatch("archive")]
+        [HttpPatch("archive/{id}")]
         public async Task<IActionResult> Archive(int id)
         {
             await productsService.Archive(id);
             return Ok();
         }
 
-        [HttpPatch("restore")]
+        [HttpPatch("restore/{id}")]
         public async Task<IActionResult> Restore(int id)
         {
             await productsService.Restore(id);
             return Ok();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await productsService.Delete(id);

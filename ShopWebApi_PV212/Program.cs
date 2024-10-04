@@ -51,6 +51,8 @@ builder.Services.AddSwaggerJWT();
 
 builder.Services.AddHangfire(connectionString);
 
+builder.Services.AddCorsPolicies();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -63,6 +65,8 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
+
+app.UseCors("front-end-cors-policy");
 
 app.UseAuthentication();
 app.UseAuthorization();
