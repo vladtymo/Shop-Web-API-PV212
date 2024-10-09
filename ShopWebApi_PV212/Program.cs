@@ -23,7 +23,7 @@ using ShopWebApi_PV212;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string connectionString = builder.Configuration.GetConnectionString("LocalDb")!;
+string connectionString = builder.Configuration.GetConnectionString("AzureDb")!;
 
 // Add services to the container.
 
