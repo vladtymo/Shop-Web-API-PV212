@@ -30,6 +30,12 @@ namespace ShopWebApi_PV212.Controllers
             return Ok(await productsService.GetAll());
         }
 
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            return Ok(await productsService.GetCategories());
+        }
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)

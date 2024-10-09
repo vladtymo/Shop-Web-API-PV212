@@ -22,15 +22,18 @@ namespace Core.Services
         private readonly IMapper mapper;
         private readonly IValidator<CreateProductDto> validator;
         private readonly IRepository<Product> productR;
+        private readonly IRepository<Category> categoryR;
 
         public ProductsService(
             IMapper mapper,
             IValidator<CreateProductDto> validator,
-            IRepository<Product> productR)
+            IRepository<Product> productR,
+            IRepository<Category> categoryR)
         {
             this.mapper = mapper;
             this.validator = validator;
             this.productR = productR;
+            this.categoryR = categoryR;
         }
 
         public async Task Archive(int id)
@@ -85,6 +88,11 @@ namespace Core.Services
         public async Task<IEnumerable<ProductDto>> GetAll()
         {
             return mapper.Map<List<ProductDto>>(await productR.Get(includeProperties: "Category"));
+        }
+
+        public async Task<IEnumerable<CategoryDto>> GetCategories()
+        {
+            return mapper.Map<IEnumerable<CategoryDto>>(await categoryR.GetAll());
         }
 
         public async Task Restore(int id)
