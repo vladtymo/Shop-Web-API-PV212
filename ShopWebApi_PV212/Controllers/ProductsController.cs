@@ -36,7 +36,7 @@ namespace ShopWebApi_PV212.Controllers
             return Ok(await productsService.GetCategories());
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
