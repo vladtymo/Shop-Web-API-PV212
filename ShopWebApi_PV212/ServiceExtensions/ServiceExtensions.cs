@@ -83,8 +83,9 @@ namespace ShopWebApi_PV212.ServiceExtensions
                 options.AddPolicy(name: "front-end-cors-policy",
                     policy =>
                     {
-                        policy.WithOrigins("https://localhost:4200",
-                                            "http://localhost:4200");
+                        // policy.WithOrigins("https://localhost:4200",
+                        //                     "http://localhost:4200");
+                        policy.AllowAnyOrigin();
                         policy.AllowAnyMethod();
                         policy.AllowAnyHeader();
                     });
