@@ -61,8 +61,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseExceptionHandler();
+if (app.Environment.IsProduction())
+{
+    app.UseExceptionHandler();
+}
 
 app.UseHttpsRedirection();
 
