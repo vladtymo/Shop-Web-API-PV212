@@ -14,6 +14,7 @@ namespace Core
             services.AddScoped<IProductsService, ProductsService>();
             services.AddScoped<IAccountsService, AccountsService>();
             services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IFileService, AzureBlobService>();
         }
 
         public static void AddAutoMapper(this IServiceCollection services)

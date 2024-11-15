@@ -23,17 +23,20 @@ namespace Core.Services
         private readonly IValidator<CreateProductDto> validator;
         private readonly IRepository<Product> productR;
         private readonly IRepository<Category> categoryR;
+        private readonly IFileService fileService;
 
         public ProductsService(
             IMapper mapper,
             IValidator<CreateProductDto> validator,
             IRepository<Product> productR,
-            IRepository<Category> categoryR)
+            IRepository<Category> categoryR,
+            IFileService fileService)
         {
             this.mapper = mapper;
             this.validator = validator;
             this.productR = productR;
             this.categoryR = categoryR;
+            this.fileService = fileService;
         }
 
         public async Task Archive(int id)
@@ -51,7 +54,12 @@ namespace Core.Services
             // TODO: validate model
             //validator.ValidateAndThrow(model);
 
-            await productR.Insert(mapper.Map<Product>(model));
+            var entity = mapper.Map<Product>(model);
+            
+            if (model.Image != null)
+                entity.ImageUrl = await fileService.SaveProductImage(model.Image);
+                        
+            await productR.Insert(entity);
             await productR.Save();
         }
 
