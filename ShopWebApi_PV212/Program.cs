@@ -19,6 +19,7 @@ using System.Text;
 using Core;
 using Data;
 using Hangfire;
+using ShopMvcApp_PV212.SeedExtensions;
 using ShopWebApi_PV212;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,6 +55,13 @@ builder.Services.AddHangfire(connectionString);
 builder.Services.AddCorsPolicies();
 
 var app = builder.Build();
+
+// -------------- Seed Initial Data
+using (var scope = app.Services.CreateScope())
+{
+    scope.ServiceProvider.SeedRoles().Wait();
+    scope.ServiceProvider.SeedAdmin().Wait();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

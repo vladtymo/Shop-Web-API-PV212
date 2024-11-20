@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ShopMvcApp_PV212.SeedExtensions;
 
 namespace ShopWebApi_PV212.Controllers
 {
@@ -51,6 +52,7 @@ namespace ShopWebApi_PV212.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create([FromForm] CreateProductDto model)
         {
             //if (!ModelState.IsValid)
@@ -84,6 +86,7 @@ namespace ShopWebApi_PV212.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.ADMIN, AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Delete(int id)
         {
             await productsService.Delete(id);
